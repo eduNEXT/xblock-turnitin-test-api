@@ -1,0 +1,42 @@
+
+
+
+
+
+<div class="turnitin_block">
+    <p>TurnitinXBlock: count is now
+        <span class='count'>{self.count}</span> (click me to increment).
+    </p>
+
+    <section>
+        <button id="viewEULA">View EULA</button>
+
+        <!-- Modal con términos y condiciones -->
+        <div class="modal" id="eulaModal">
+            <div class="modal-content">
+                <h2>End User License Agreement (EULA)</h2>
+                <p>Acá irían los términos y condiciones...</p>
+                <button id="acceptEULA">Aceptar</button>
+                <button id="declineEULA">No Aceptar</button>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="file-upload-container">
+            <h2>Subir un archivo</h2>
+            <form action="/upload-endpoint" method="post" enctype="multipart/form-data">
+                <div class="file-upload">
+                    <input type="file" name="myfile" id="file" accept=".doc, .docx">
+                    <label for="file">Elegir archivo</label>
+                    <span class="selected-filename">Ningún archivo seleccionado</span>
+                </div>
+                <button type="submit" disabled>Subir archivo</button>
+            </form>
+        </div>
+    </section>
+
+
+
+
+
