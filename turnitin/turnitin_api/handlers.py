@@ -93,12 +93,12 @@ def get_eula_page(version: str = 'v1beta', language: str = 'en-US'):
     response = turnitin_api_handler('get', f'/eula/{version}/view?lang={language}')
     return response.text
 
-def post_accept_eula_version(payload):
+def post_accept_eula_version(payload, version: str = 'v1beta'):
     """
     Accepts a specific EULA version. 
     This method should be invoked after the user has viewed the EULA content.
     """
-    response = turnitin_api_handler('post', 'eula/v1beta/accept', payload)
+    response = turnitin_api_handler('post', f'eula/{version}/accept', payload)
     pretty_print_response(response)
 
 def get_eula_acceptance_by_user(user_id):
@@ -120,7 +120,7 @@ def post_create_submission(payload):
     related to an assessment sent by a student.
     """
     response = turnitin_api_handler('post', 'submissions', payload)
-    pretty_print_response(response)
+    return response.json()['id']
 
 def put_upload_submission_file_content(submission_id, payload):
     """

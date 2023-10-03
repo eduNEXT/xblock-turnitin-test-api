@@ -21,13 +21,14 @@ body {
 
 /* Estilo base para todas las secciones */
 section {
-    padding: 20px; /* Espacio dentro de cada sección */
-    margin-bottom: 20px; /* Espacio entre secciones */
-    display: flex; /* Usa flexbox para centrar el contenido */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    flex-direction: column; /* Asegura que el contenido se muestre verticalmente uno debajo del otro */
-    box-sizing: border-box; /* Asegura que el padding no aumente la altura total */
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 200px;
 }
 /* Estilo para las secciones pares (gris claro) */
 section:nth-child(even) {

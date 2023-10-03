@@ -26,17 +26,33 @@ function TurnitinXBlock(runtime, element) {
     });
 
     $('#viewEULA', element).click(function() {
-        var handlerUrl = runtime.handlerUrl(element, 'get_eula_agreement'); // Asumo que el nombre de la acción es 'fetch_eula_content'
+        var handlerUrl = runtime.handlerUrl(element, 'get_eula_agreement');
     
         $.ajax({
-            type: "POST", // Asumo que estamos obteniendo el contenido, así que usamos GET en lugar de POST
+            type: "POST",
             url: handlerUrl,
             data: JSON.stringify({"hello": "world"}),
             success: function(response) {
-                showEULA(response); // Usa la respuesta como contenido HTML del modal
+                showEULA(response);
             },
             error: function() {
-                //alert('Error al obtener el contenido del EULA.');
+                alert('Error al obtener el contenido del EULA.');
+            }
+        });
+    });
+
+    $('#acceptEULA', element).click(function() {
+        var handlerUrl = runtime.handlerUrl(element, 'accept_eula_agreement');
+    
+        $.ajax({
+            type: "POST",
+            url: handlerUrl,
+            data: JSON.stringify({"hello": "world"}),
+            success: function(response) {
+                alert('EULA accepted!.');
+            },
+            error: function() {
+                alert('Error getting EULA content.');
             }
         });
     });

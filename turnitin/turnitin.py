@@ -1,5 +1,6 @@
 """TO-DO: Write a description of what this XBlock is."""
 
+from datetime import datetime
 import pkg_resources
 from django.utils import translation
 from xblock.core import XBlock
@@ -7,9 +8,13 @@ from xblock.fields import Integer, Scope
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 
-from .turnitin_api.handlers import get_eula_page
+from .turnitin_api.handlers import (get_eula_page,
+                                    post_accept_eula_version,
+                                    post_create_submission,
+                                    )
 
-
+@XBlock.needs("user")
+@XBlock.needs("user_state")
 class TurnitinXBlock(XBlock):
     """
     TO-DO: document what your XBlock does.
@@ -87,9 +92,71 @@ class TurnitinXBlock(XBlock):
     
 
 
+
+
+
     @XBlock.json_handler
     def get_eula_agreement(self, data, suffix=''):
         return get_eula_page()
+    
+
+    @XBlock.json_handler
+    def accept_eula_agreement(self, data, suffix=''):
+        user_service = self.runtime.service(self, 'user')
+        user_id = user_service.get_current_user().opt_attrs['edx-platform.user_id']
+        date_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        payload = {
+            "user_id": str(user_id), "accepted_timestamp": date_now, "language": "en-US"
+        }
+        return post_accept_eula_version(payload)
+
+    def create_turnitin_submission_object(self):
+        current_user = self.runtime.service(self, 'user').get_current_user()
+        user_email = current_user.emails[0]
+        user_name = current_user.full_name.split()
+        user_id = current_user.opt_attrs['edx-platform.user_id']
+        anonymous_user_id = current_user.opt_attrs['anonymous_user_id']
+        date_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+
+        payload={
+        "owner": anonymous_user_id,
+        "title": self.location,
+        "submitter": user_id,
+        "owner_default_permission_set": "LEARNER",
+        "submitter_default_permission_set": "INSTRUCTOR",
+        "extract_text_only": False,
+        "metadata": {
+          "owners": [
+            {
+              "id": anonymous_user_id,
+              "given_name": user_name[0] if user_name else "",
+              "family_name": ' '.join(user_name[1:]) if len(user_name) > 1 else "",
+              "email": user_email
+            }
+            ],
+          "submitter": {
+            "id": user_id,
+            "given_name": user_name[0] if user_name else "",
+            "family_name": ' '.join(user_name[1:]) if len(user_name) > 1 else "",
+            "email": user_email
+            },
+
+          "original_submitted_time": date_now,
+            }
+        }
+        return post_create_submission(payload)
+        
+
+
+
+
+
+
+
+
+
+
+
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
