@@ -177,7 +177,7 @@ setup(
             'turnitin = turnitin:TurnitinXBlock',
         ],
         "lms.djangoapp": [
-            "turnitin_api = turnitin.turnitin_api.apps:TurnitinApiConfig"
+            "turnitin = turnitin.turnitin_api.apps:TurnitinApiConfig"
         ],
     },
     package_data=package_data("turnitin", ["static", "public"]),
