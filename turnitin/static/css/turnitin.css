@@ -20,7 +20,7 @@ body {
 }
 
 /* Estilo base para todas las secciones */
-section {
+.turnitin-test-section {
     padding: 20px;
     margin-bottom: 20px;
     display: flex;
@@ -31,12 +31,12 @@ section {
     min-height: 200px;
 }
 /* Estilo para las secciones pares (gris claro) */
-section:nth-child(even) {
+.turnitin-test-section:nth-child(even) {
     background-color: #f4f4f4; /* Gris claro */
 }
 
 /* Estilo para las secciones impares (blanco) */
-section:nth-child(odd) {
+.turnitin-test-section:nth-child(odd) {
     background-color: #ffffff; /* Blanco */
 }
 
@@ -112,7 +112,7 @@ button {
     cursor: pointer;
 }
 
-/* CSS PARA EL MODAL */
+/* CSS PARA EL MODAL EULA */
 .modal {
     display: none;
     position: fixed;
@@ -120,7 +120,7 @@ button {
     left: 10%; 
     width: 80%; 
     min-height: 300px;
-    max-height: 70%; 
+    max-height: 500px; 
     overflow-y: auto; 
     background-color: white; 
     z-index: 1000; 
@@ -130,4 +130,87 @@ button {
 .modal-content {
     margin-top: 0;
     padding-top: 20px; /* Ajusta según lo necesario */
+}
+
+/* CSS PARA STATUS*/
+.traffic-light {
+    width: 50px;
+    height: 150px;
+    background-color: #333;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin: 0 auto;
+}
+
+.light {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #111;
+}
+
+.red {
+    background-color: rgb(255, 0, 0);
+}
+
+.yellow {
+    background-color: #ffee00;
+}
+
+.green {
+    background-color: #00fb00;
+}
+
+.off {
+    opacity: 0.3;
+}
+
+.refresh-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0077CC;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.refresh-btn:hover {
+    background-color: #0055AA;
+}
+
+
+.generate-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #444;
+    color: #aaa;
+    cursor: not-allowed;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.generate-btn.enabled {
+    background-color: #0077CC;
+    color: #fff;
+    cursor: pointer;
+}
+
+.generate-btn.enabled:hover {
+    background-color: #0055AA;
+}
+
+/* CSS PARA EL TEXT ASSESSMENT */
+#textsubmission{
+    width: 400px; 
+    height: 250px;
 }

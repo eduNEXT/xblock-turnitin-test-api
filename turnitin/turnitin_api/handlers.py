@@ -2,7 +2,7 @@ import requests
 from typing import Optional, Dict
 import json
 
-def turnitin_api_handler(request_method: str, url_prefix: str = '', data: Optional[Dict] = None):
+def turnitin_api_handler(request_method: str, url_prefix: str = '', data: Optional[Dict] = None, is_upload: bool = False, uploaded_file = None):
     """
     Handles API requests to the Turnitin service.
     
@@ -22,7 +22,7 @@ def turnitin_api_handler(request_method: str, url_prefix: str = '', data: Option
     TII_API_URL = "https://edunext.tii-sandbox.com"
     TCA_INTEGRATION_FAMILY = "MySweetLMS"
     TCA_INTEGRATION_VERSION = "3.2.4"
-    TCA_API_KEY = "[TURNITIN API SECRET KEY HERE]"
+    TCA_API_KEY = "[SECRET_KEY]"
 
     # Headers configuration
     headers = {
@@ -34,6 +34,12 @@ def turnitin_api_handler(request_method: str, url_prefix: str = '', data: Option
     # Add Content-Type for methods that typically send JSON payload
     if request_method.lower() in ['post', 'put', 'patch']:
         headers["Content-Type"] = "application/json"
+    
+    if is_upload:
+        headers['Content-Type'] = 'binary/octet-stream'
+        headers['Content-Disposition'] = f'inline; filename="{uploaded_file.name}"'
+        response = requests.put(f"{TII_API_URL}/api/v1/{url_prefix}", headers=headers, data=uploaded_file)
+        return response
 
     # Mapping of methods to corresponding functions in the requests library
     method_map = {
@@ -59,10 +65,15 @@ def turnitin_api_handler(request_method: str, url_prefix: str = '', data: Option
     return response
 
 
-def pretty_print_response(response):
+def pretty_print_response(response, type_of=''):
     content = response.json()
+    print('\n\n')
+    print(f'------{type_of}------')
+    print('\n\n')
     print(json.dumps(content, indent=4))
-
+    print('\n\n')
+    print('------------')
+    print('\n\n')
 
 # Returns all the features enabled in Turnitin account.
 def get_features_enabled():
@@ -99,7 +110,7 @@ def post_accept_eula_version(payload, version: str = 'v1beta'):
     This method should be invoked after the user has viewed the EULA content.
     """
     response = turnitin_api_handler('post', f'eula/{version}/accept', payload)
-    pretty_print_response(response)
+    pretty_print_response(response, 'ACCEPT EULA')
 
 def get_eula_acceptance_by_user(user_id):
     """
@@ -120,21 +131,31 @@ def post_create_submission(payload):
     related to an assessment sent by a student.
     """
     response = turnitin_api_handler('post', 'submissions', payload)
-    return response.json()['id']
+    pretty_print_response(response, 'CREATE SUBMISSION')
+    return response
 
-def put_upload_submission_file_content(submission_id, payload):
+def put_upload_submission_file_content(submission_id, file):
     """
     Attaches a document to a student's submission.
     """
-    response = turnitin_api_handler('put', f'submissions/{submission_id}/original', payload)
-    pretty_print_response(response)
+    response = turnitin_api_handler('put', f'submissions/{submission_id}/original', is_upload=True, uploaded_file=file)
+    pretty_print_response(response, 'UPLOAD FILE')
+    return response
 
 def get_submission_info(submission_id):
     """
     Fetches all the information related to a specific submission.
+
+    Status:
+        CREATED	Submission has been created but no file has been uploaded
+        PROCESSING	File contents have been uploaded and the submission is being processed
+        COMPLETE	Submission processing is complete
+        ERROR	An error occurred during submission processing; see error_code for details
+
     """
     response = turnitin_api_handler('get', f'submissions/{submission_id}')
-    pretty_print_response(response)
+    pretty_print_response(response, 'SUBMISSION STATUS')
+    return response.json()['status']
 
 def delete_submission(submission_id, is_hard_delete='false'):
     """
@@ -156,28 +177,34 @@ def put_recover_submission(submission_id):
 # Similarity is a Turnithin report with an internet similarity detection 
 # score of the student submissions.
 
-def put_generate_similarity_report(submission_id):
+def put_generate_similarity_report(submission_id, payload):
     """
     Turnitin begin to process the doc to generate the report.
     """
-    response = turnitin_api_handler('put', f'submissions/{submission_id}/similarity')
-    pretty_print_response(response)
+    response = turnitin_api_handler('put', f'submissions/{submission_id}/similarity', payload)
+    pretty_print_response(response, 'REPORT GENERATION')
+    return response
 
 def get_similarity_report_info(submission_id):
     """
     Returns summary information about the requested Similarity Report.
+    Status:
+        PROCESSING
+        COMPLETE
     """
     response = turnitin_api_handler('get', f'submissions/{submission_id}/similarity')
-    pretty_print_response(response)
+    pretty_print_response(response, 'REPORT STATUS')
+    return response.json()['status']
 
-def post_create_viewer_launch_url(submission_id):
+def post_create_viewer_launch_url(submission_id, payload):
     """
     So that users can interact with the details of a submission and Similarity Report, 
     Turnitin provides a purpose-built viewer to enable smooth interaction with the 
     report details and submitted document. 
     """
-    response = turnitin_api_handler('post', f'submissions/{submission_id}/viewer-url')
-    pretty_print_response(response)
+    response = turnitin_api_handler('post', f'submissions/{submission_id}/viewer-url',payload)
+    pretty_print_response(response, 'URL VIEWER')
+    return response.json()['viewer_url']
 
 def post_generate_similarity_report_pdf(submission_id):
     """

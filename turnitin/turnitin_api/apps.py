@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 class TurnitinApiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'turnitin.turnitin_api'
+    name = 'turnitin_api'
 
     plugin_app = {
         'settings_config': {
@@ -11,3 +11,5 @@ class TurnitinApiConfig(AppConfig):
             },
         },
     }
+    def ready(self):
+        super().ready()
